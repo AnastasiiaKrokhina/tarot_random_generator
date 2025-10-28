@@ -1,3 +1,17 @@
+---
+### 🩵 Disclaimer / Personal Note
+
+This project is **a personal, non-commercial side experiment** created purely for fun and creative exploration.  
+It is **not related to my professional work** in any way.
+
+The app uses simple logic and a language model to generate *entertainment-style tarot readings*.  
+It does **not provide real advice**, medical or otherwise.  
+All tarot card images were **AI-generated** (ChatGPT / DALL·E) and are free for use under OpenAI’s content policy.
+
+I built this project as a small creative break — a playful way to combine coding and design with a "girly" aesthetic 🌸✨
+
+---
+
 # Tarot of the Day 🔮
 
 Streamlit-приложение, которое каждый день генерирует "развлекательный прогноз".
