@@ -1,7 +1,9 @@
 import datetime
 import os
 import requests
+import pathlib
 import streamlit as st
+import pandas as pd
 
 from cards_meta import pick_daily_cards
 
@@ -26,9 +28,46 @@ st.set_page_config(
     layout="centered",
 )
 
+@st.cache_data
+def load_tarot_dataset():
+    df = pd.read_csv("tarot_readings.csv", encoding="utf-8")
+    return df
 ########################
 # HELPERS
 ########################
+
+# def find_reading_for(cards, df):
+#     """
+#     cards: список имён карт (например ["The Fool", "The Magician", "The Empress"])
+#     df: pandas.DataFrame с колонками 'Card 1', 'Card 2', 'Card 3', 'Reading'
+#     """
+#     target_set = {c.lower().strip() for c in cards}
+
+#     for _, row in df.iterrows():
+#         row_set = {str(row["Card 1"]).lower().strip(),
+#                    str(row["Card 2"]).lower().strip(),
+#                    str(row["Card 3"]).lower().strip()}
+#         if row_set == target_set:
+#             return row["Reading"]
+
+#     return None
+
+def build_lookup(df):
+    lookup = {}
+    for _, row in df.iterrows():
+        key = frozenset([
+            str(row["Card 1"]).lower().strip(),
+            str(row["Card 2"]).lower().strip(),
+            str(row["Card 3"]).lower().strip()
+        ])
+        lookup[key] = row["Reading"]
+    return lookup
+
+
+def find_reading_for(cards, lookup):
+    key = frozenset(c.lower().strip() for c in cards)
+    return lookup.get(key)
+
 
 def build_prompt(cards):
     """
@@ -104,14 +143,14 @@ def call_hf_inference(prompt: str) -> str:
     return str(data)
 
 
-def show_card(card):
+def show_card(card, set_name):
     """
     card: один dict карты
     Показываем картинку и подпись.
     """
     orientation_label = "перевернута" if card["is_reversed"] else "прямая"
 
-    st.image(card["image"], width=200)
+    st.image(pathlib.Path("cards",set_name, card["image"]), width=200)
     st.markdown(
         f"**{card['name']}** ({orientation_label})  \n"
         f"_Ключевые идеи:_ {', '.join(card['reversed' if card['is_reversed'] else 'upright'])}  \n"
@@ -134,18 +173,33 @@ st.sidebar.code(today)
 num_cards = st.sidebar.slider("Сколько карт тянуть?", min_value=3, max_value=4, value=3)
 # (держим 3 фиксированно, но слайдер даёт чувство интерактива; можешь расширить позже)
 
-cards_today = pick_daily_cards(seed_str=today, n_cards=num_cards)
+cards_today = pick_daily_cards(seed_str=today
+                               , n_cards=num_cards)
 
 st.subheader("Твои карты сегодня")
 cols = st.columns(len(cards_today))
 for col, c in zip(cols, cards_today):
     with col:
-        show_card(c)
+        show_card(c, "minecraft")
 
 st.subheader("Сообщение дня 🌙")
 prompt = build_prompt(cards_today)
 reading_text = call_hf_inference(prompt)
 st.write(reading_text)
+df = load_tarot_dataset()
+card_names = [c["name"] for c in cards_today]
+reading_from_csv = find_reading_for(card_names, df)
+
+if reading_from_csv:
+    st.subheader("Сообщение дня 🌙")
+    st.write(reading_from_csv)
+else:
+    # fallback — если не найдено, вызвать LLM
+    prompt = build_prompt(cards_today)
+    reading_text = call_hf_inference(prompt)
+    st.subheader("Сообщение дня 🌙")
+    st.write(reading_from_csv)
+
 
 st.markdown("---")
 st.caption("Это не совет по здоровью, финансам или юриспруденции. Это мягкая подсказка-вдохновение ✨")
