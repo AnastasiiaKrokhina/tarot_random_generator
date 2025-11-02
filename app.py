@@ -321,3 +321,23 @@ st.caption("Это развлекательный контент. Не меди�
 
 st.markdown("---")
 st.caption("Это не совет по здоровью, финансам или юриспруденции. Это мягкая подсказка-вдохновение ✨")
+
+
+import json
+import streamlit as st
+from urllib.parse import parse_qs
+
+# --- админ-режим через query params ---
+query_params = st.query_params  # Streamlit 1.33+
+is_admin = query_params.get("admin", ["0"])[0] == "1"
+
+cache_dict = load_cache()
+
+if is_admin:
+    with st.expander("🔒 Admin"):
+        st.download_button(
+            label="⬇ Скачать tarot_cache.json",
+            data=json.dumps(cache_dict, ensure_ascii=False, indent=2),
+            file_name="tarot_cache.json",
+            mime="application/json",
+        )
