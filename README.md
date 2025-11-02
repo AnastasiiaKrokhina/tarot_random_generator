@@ -1,5 +1,5 @@
 ---
-### 🩵 Disclaimer / Personal Note
+### Disclaimer / Personal Note
 
 This project is **a personal, non-commercial side experiment** created purely for fun and creative exploration.  
 It is **not related to my professional work** in any way.
@@ -14,20 +14,28 @@ I built this project as a small creative break — a playful way to combine codi
 
 # Tarot of the Day 🔮
 
-Streamlit-приложение, которое каждый день генерирует "развлекательный прогноз".
+MVP is located here: https://taro-random-generator.streamlit.app/
 
-## Запуск локально
+Streamlit-app generates 3 tarot set based on the date and 150 words LLM-generated tarot readings based on tarot cards' names, orientation, description and key meanings. 
 
-1. Установи зависимости:
+To generate tarot readings I used __meta-llama/Llama-3.3-70B-Instruct:groq__ model on HuggingFace. Firstly code checks if the reading for the selected cards set existis in my json cash database, otherwise it makes inference from HuggingFace and then saves this reading in json cash database to future use. 
+
+Minecraft tarot cards generated with ChatGPT-5, as well as a wallpaper.
+
+## Run localy
+
+1. Build dependencies:
    ```bash
    pip install -r requirements.txt
 
     (Необязательно) Получи Hugging Face API токен и экспортируй:
+    export HF_TOKEN="hf_xxx..."
+    ```
 
-export HF_TOKEN="hf_xxx..."
+2. Run:
 
-2. Запусти:
-
+    ``` bash
     streamlit run app.py
+    ```
 
 Откроется браузер с приложением.
