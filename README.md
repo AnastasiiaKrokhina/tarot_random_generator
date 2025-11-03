@@ -18,7 +18,7 @@ MVP is located here: https://taro-random-generator.streamlit.app/
 
 Streamlit-app generates 3 tarot set based on the date and 150 words LLM-generated tarot readings based on tarot cards' names, orientation, description and key meanings. 
 
-To generate tarot readings I used __meta-llama/Llama-3.3-70B-Instruct:groq__ model on HuggingFace. Firstly code checks if the reading for the selected cards set existis in my json cash database, otherwise it makes inference from HuggingFace and then saves this reading in json cash database to future use. 
+To generate tarot readings I used __meta-llama/Llama-3.1-8B-Instruct__ model on HuggingFace. Firstly code checks if the reading for the selected cards set existis in my json cash database, otherwise it makes inference from HuggingFace and then saves this reading in json cash database to future use. 
 
 Minecraft tarot cards generated with ChatGPT-5, as well as a wallpaper.
 
